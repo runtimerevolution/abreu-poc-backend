@@ -15,7 +15,6 @@ class PromptService
   private
 
   def build_prompt(input)
-    binding.pry
     context = REDIS.get(input[:session_id] || 'test')
     context = context.blank? ? {} : JSON.parse(context)
     @client = OpenAI::Client.new
