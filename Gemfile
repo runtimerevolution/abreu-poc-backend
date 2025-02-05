@@ -6,7 +6,7 @@ gem 'puma', '>= 5.0'
 gem 'rack-cors', '~> 2.0.2', require: 'rack/cors'
 gem 'tzinfo-data', platforms: %i[ windows jruby ]
 gem 'bootsnap', require: false
-gem 'dotenv-rails', '~> 2.1', '>= 2.1.1'
+gem 'dotenv-rails', '~> 3.1'
 gem 'redis'
 
 gem 'ruby-openai', '~> 7.3', '>= 7.3.1'

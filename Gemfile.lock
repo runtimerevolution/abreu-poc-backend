@@ -90,10 +90,10 @@ GEM
     crass (1.0.6)
     date (3.4.1)
     debug_inspector (1.2.0)
-    dotenv (2.8.1)
-    dotenv-rails (2.8.1)
-      dotenv (= 2.8.1)
-      railties (>= 3.2)
+    dotenv (3.1.7)
+    dotenv-rails (3.1.7)
+      dotenv (= 3.1.7)
+      railties (>= 6.1)
     drb (2.2.1)
     dry-core (1.1.0)
       concurrent-ruby (~> 1.0)
@@ -324,7 +324,7 @@ PLATFORMS
 DEPENDENCIES
   bootsnap
   brakeman
-  dotenv-rails (~> 2.1, >= 2.1.1)
+  dotenv-rails (~> 3.1)
   dry-transaction (~> 0.16.0)
   pry
   pry-byebug
