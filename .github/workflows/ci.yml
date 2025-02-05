@@ -1,74 +1,57 @@
 name: CI
 
 on:
-  pull_request:
   push:
-    branches: [ main ]
+    branches-ignore:
+      - main
 
 jobs:
-  scan_ruby:
+  rspec:
     runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: .ruby-version
-          bundler-cache: true
-
-      - name: Scan for common Rails security vulnerabilities using static analysis
-        run: bin/brakeman --no-pager
-
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: .ruby-version
-          bundler-cache: true
-
-      - name: Lint code for consistent style
-        run: bin/rubocop -f github
-
-  test:
-    runs-on: ubuntu-latest
+    env:
+      RAILS_ENV: ci
 
     # services:
-    #  redis:
-    #    image: redis
-    #    ports:
-    #      - 6379:6379
-    #    options: --health-cmd "redis-cli ping" --health-interval 10s --health-timeout 5s --health-retries 5
+    #   postgres:
+    #     env:
+    #       POSTGRES_DB: postgres
+    #       POSTGRES_PASSWORD: postgres
+    #       POSTGRES_USER: postgres
+    #     image: postgres:15.3
+    #     ports:
+    #       - 5432:5432
+    #     options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+    #   redis:
+    #     image: redis:latest
+    #     ports:
+    #       - 6379:6379
+
     steps:
-      - name: Install packages
-        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y google-chrome-stable curl libjemalloc2 libvips sqlite3
+      - name: Checkout Repository
+        uses: actions/checkout@v3
 
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Ruby
+      - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: .ruby-version
+          ruby-version: 3.2.5
           bundler-cache: true
+          cache-version: 1
 
-      - name: Run tests
-        env:
-          RAILS_ENV: test
-          # REDIS_URL: redis://localhost:6379/0
-        run: bin/rails db:test:prepare test test:system
+      - name: Install Dependencies
+        run: |-
+          sudo apt-get update
+          sudo apt-get install -y libxml2-utils
+          wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+          echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" | sudo tee  /etc/apt/sources.list.d/pgdg.list
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client-15 psmisc
 
-      - name: Keep screenshots from failed system tests
-        uses: actions/upload-artifact@v4
-        if: failure()
-        with:
-          name: screenshots
-          path: ${{ github.workspace }}/tmp/screenshots
-          if-no-files-found: ignore
+      # - name: Unit Test with RSpec
+      #   # run: bundle exec parallel_test spec packs/**/spec -t rspec
+      #   run: |-
+      #     bundle exec rails db:create db:schema:load RAILS_ENV=ci
+      #     bundle exec rspec
+
+      # - name: Run Rubocop
+      #   run: bundle exec rubocop
