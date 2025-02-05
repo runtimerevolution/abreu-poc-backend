@@ -15,7 +15,7 @@ class PromptService
   private
 
   def build_prompt(input)
-    context = REDIS.get(input[:user_session] || 'test')
+    context = REDIS.get(input[:user_session])
     context = context.blank? ? {} : JSON.parse(context)
     @client = OpenAI::Client.new
     response = @client.chat(
@@ -65,18 +65,22 @@ class PromptService
             - When given a country, create 5 Trip Plans with the following information:
               - Destination (destination);
               - Hotel List (hotel_list);
+              - Average temperature (average_temp)
               - Surrounding cities (surrounding_cities);
               - Landmarks (landmarks);
               - Popular restaurants (restaurants);
               - Small history of the area (small_history);
+              - 10 word description of the area (short_description);
               - Activities for each day, for each time of day (activities_per_day);
                 - Return each activity as a string;
             - When given a city or county, create 1 Trip Plan with the following information:
               - Hotel List (hotel_list);
+              - Average temperature (average_temp)
               - Surrounding cities (surrounding_cities);
               - Landmarks (landmarks);
               - Popular restaurants (restaurants);
               - Small history of the area (small_history);
+              - 10 word description of the area (short_description);
               - Activities for each day, for each time of day (activities_per_day);
                 - Return each activity as a string;
             - Remove values that are not specified or provided.
