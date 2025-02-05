@@ -15,7 +15,7 @@ class PromptService
   private
 
   def build_prompt(input)
-    context = REDIS.get(input[:session_id] || 'test')
+    context = REDIS.get(input[:user_session] || 'test')
     context = context.blank? ? {} : JSON.parse(context)
     @client = OpenAI::Client.new
     response = @client.chat(
@@ -46,7 +46,7 @@ class PromptService
     ).delete_if { |k, v| v.blank? }
     context.merge!(prompt_data) { |k, old_v, new_v| new_v.present? ? new_v : old_v }
 
-    REDIS.set(input[:session_id], context.to_json)
+    REDIS.set(input[:user_session], context.to_json)
     input[:clean_prompts] = context.map { |k, v| "#{k}: #{v};\n" if v.present? }.compact.join
 
     Success(input)
@@ -62,12 +62,23 @@ class PromptService
             content: "
             Task:
             - Always respond with an array of JSON
-            - The Descriptions should be 190 characters long.
-
-            - Answer only to the following topics: questions about countries/counties/cities, geographical data;
-            - Example JSON output if the question is not related to the topics: [{ 'error': 'some message saying the question is not relevant' }].
-            - Example JSON output if the question is about the country or city: [{ 'Name': 'Some name', 'description': 'Some Descriptions', 'landmarks': 'Some landmarks'}]
-
+            - When given a country, create 5 Trip Plans with the following information:
+              - Destination (destination);
+              - Hotel List (hotel_list);
+              - Surrounding cities (surrounding_cities);
+              - Landmarks (landmarks);
+              - Popular restaurants (restaurants);
+              - Small history of the area (small_history);
+              - Activities for each day, for each time of day (activities_per_day);
+                - Return each activity as a string;
+            - When given a city or county, create 1 Trip Plan with the following information:
+              - Hotel List (hotel_list);
+              - Surrounding cities (surrounding_cities);
+              - Landmarks (landmarks);
+              - Popular restaurants (restaurants);
+              - Small history of the area (small_history);
+              - Activities for each day, for each time of day (activities_per_day);
+                - Return each activity as a string;
             - Remove values that are not specified or provided.
             - Return the information in portuguese of Portugal.
             - Remove all single quote from response.
