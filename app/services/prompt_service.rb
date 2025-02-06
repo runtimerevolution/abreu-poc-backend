@@ -62,7 +62,7 @@ class PromptService
             content: "
             Task:
             - Always respond with an array of JSON
-            - When given a country, create 5 Trip Plans with the following information:
+            - When given a country, create 3 Trip Plans with the following information:
               - Destination (destination);
               - Hotel List (hotel_list);
               - Average temperature (average_temp)
