@@ -1,3 +1,3 @@
 require 'redis'
 
-REDIS = Redis.new(host: ENV.fetch('REDIS_HOST'), port: ENV.fetch('REDIS_PORT'))
+REDIS = Redis.new(url: ENV['REDISCLOUD_URL'])
