@@ -10,6 +10,7 @@ gem 'dotenv-rails', '~> 2.1', '>= 2.1.1'
 gem 'redis'
 
 gem 'ruby-openai', '~> 7.3', '>= 7.3.1'
+gem "rack-timeout", require: "rack/timeout/base"
 
 gem 'dry-transaction', '~> 0.16.0'
 
