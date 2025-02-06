@@ -74,6 +74,7 @@ class PromptService
               - Activities for each day, for each time of day (activities_per_day);
                 - Return each activity as a string;
             - When given a city or county, create 1 Trip Plan with the following information:
+              - Destination (destination);
               - Hotel List (hotel_list);
               - Average temperature (average_temp)
               - Surrounding cities (surrounding_cities);
