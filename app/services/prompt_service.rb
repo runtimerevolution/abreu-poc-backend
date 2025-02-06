@@ -62,7 +62,7 @@ class PromptService
             content: "
             Task:
             - Always respond with an array of JSON
-            - When given a country, create 3 Trip Plans with the following information:
+            - When given a country, create 2 Trip Plans with the following information:
               - Destination (destination);
               - Hotel List (hotel_list);
               - Average temperature (average_temp)
@@ -71,8 +71,15 @@ class PromptService
               - Popular restaurants (restaurants);
               - Small history of the area (small_history);
               - 10 word description of the area (short_description);
+              - Estimated price; (price)
+              - An example of a plane to board to the destination with an hour and travel time (departure_from_origin);
+              - An example of a plane to board to the origin with an hour and travel time (departure_from_destination);
               - Activities for each day, for each time of day (activities_per_day);
+                - Follow the format { morning: ..., afternoon: ..., evening: ... }
+                - Each key should be the specific day of the trip;
                 - Return each activity as a string;
+                - The first activity needs to match the Arrival to the destination;
+                - The last activity needs to match the Departure of the destination;
             - When given a city or county, create 1 Trip Plan with the following information:
               - Destination (destination);
               - Hotel List (hotel_list);
@@ -82,8 +89,15 @@ class PromptService
               - Popular restaurants (restaurants);
               - Small history of the area (small_history);
               - 10 word description of the area (short_description);
+              - Estimated price; (price)
+              - An example of a plane to board to the destination with an hour and travel time (departure_from_origin);
+              - An example of a plane to board to the origin with an hour and travel time (departure_from_destination);
               - Activities for each day, for each time of day (activities_per_day);
+                - Follow the format { morning: ..., afternoon: ..., evening: ... }
+                - Each key should be the specific day of the trip;
                 - Return each activity as a string;
+                - The first activity needs to match the Arrival to the destination;
+                - The last activity needs to match the Departure of the destination;
             - Remove values that are not specified or provided.
             - Return the information in portuguese of Portugal.
             - Remove all single quote from response.
