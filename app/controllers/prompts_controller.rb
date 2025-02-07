@@ -10,6 +10,16 @@ class PromptsController < ApplicationController
     end
   end
 
+  def questions
+    handler = QuestionsService.new.call
+
+    if handler.success?
+      render json: handler.success[:message], status: :ok
+    else
+      render json: { message: handler.success[:message] }, status: :unprocessable_entity
+    end
+  end
+
   private
 
   def search_params

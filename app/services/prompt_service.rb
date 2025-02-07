@@ -76,6 +76,8 @@ class PromptService
               - Popular restaurants (restaurants);
               - Small history of the area (small_history);
               - 10 word description of the area (short_description);
+              - Start Date (start_date);
+              - End Date (end_date);
               - Estimated price; (price)
               - A list of 3 planes to board to the destination with an hour and travel time (departures_from_origin);
                 - follow the format 'date, departure hour, duration'
@@ -84,6 +86,7 @@ class PromptService
               - Activities for each day, for each time of day, based on the family size (activities_per_day);
                 - Follow the format { morning: ..., afternoon: ..., evening: ... }
                 - Each key should be the specific day of the trip;
+                  - The key should follow the format 'day/month/year'
                 - Return each activity as a string;
                 - The first activity needs to match the Arrival to the destination (use the first string from departures_from_origin);
                 - The last activity needs to match the Departure of the destination (use the first string from departures_from_destination);
