@@ -12,5 +12,6 @@ test:
   database: <%= ENV.fetch('DATABASE_URL', 'abreu_poc_test') %>
 
 production:
+  <<: *default
   url: <%= ENV['DATABASE_CONNECTION_POOL_URL'] || ENV['DATABASE_URL'] %>
   prepared_statements: false
