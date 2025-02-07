@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   get '/', to: proc { [200, { 'Content-Type' => 'application/json' }, [{}.to_json]] }
   get 'up' => 'rails/health#show', as: :rails_health_check
   post 'prompt', to: 'prompts#prompt'
+  post 'free_chat', to: 'prompts#free_chat'
   get 'questions', to: 'prompts#questions'
 
   # Defines the root path route ('/')
