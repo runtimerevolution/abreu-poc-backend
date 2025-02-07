@@ -1,0 +1,23 @@
+databases:
+  - name: abreu-poc-backend
+    databaseName: psql-poc-abreu
+    user: abreu-poc-backend
+    plan: free
+
+services:
+  - type: web
+    name: abreu-poc-backend
+    runtime: ruby
+    plan: free
+    buildCommand: "./lib/sh/render-build.sh"
+    # preDeployCommand: "bundle exec rails db:migrate" # preDeployCommand only available on paid instance types
+    startCommand: "bundle exec rails server"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: abreu-poc-backend
+          property: connectionString
+      - key: RAILS_MASTER_KEY
+        sync: false
+      - key: WEB_CONCURRENCY
+        value: 2 # sensible default
