@@ -66,7 +66,7 @@ class PromptService
             - Always respond with an array of JSON objects;
               - Follow the format { trip_plans: [...] };
               - Every Image key should have a null value;
-            - When given a country, create 3 Trip Plans;
+            - When given a country, create 2 Trip Plans;
               - The destination should be different cities or counties of the country;
             - When given a city or county, create 1 Trip Plan;
             - Required information
