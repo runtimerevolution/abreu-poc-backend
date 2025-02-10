@@ -82,7 +82,8 @@ class PromptService
               - 10 word description of the area (short_description);
               - Start Date (start_date);
               - End Date (end_date);
-              - Estimated price; (price)
+              - Estimated price in Euros; (price)
+                - Include the currency icon in the end of the price;
               - A list of 3 planes to board to the destination with an hour and travel time (departures_from_origin);
                 - Follow the format 'date, departure hour, duration'
               - A list of 3 planes to board to the origin with an hour and travel time (departures_from_destination);
