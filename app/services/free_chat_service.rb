@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require "dry/transaction"
-require "json"
+require 'dry/transaction'
+require 'json'
 
 class FreeChatService
   include Dry::Transaction
@@ -22,10 +22,10 @@ class FreeChatService
     @client = OpenAI::Client.new
     response = @client.chat(
       parameters: {
-        model: "gpt-4o",
+        model: 'gpt-4o',
         messages: [
           {
-            role: "user",
+            role: 'user',
             content: "
             Task:
             - Extract topics from the request;
@@ -59,11 +59,11 @@ class FreeChatService
   def build_trips_response(input)
     response = @client.chat(
       parameters: {
-        model: "gpt-4o",
-        response_format: { type: "json_object" },
+        model: 'gpt-4o',
+        response_format: { type: 'json_object' },
         messages: [
           {
-            role: "user",
+            role: 'user',
             content: "
             Task:
             - Always respond with a JSON object;
@@ -103,7 +103,7 @@ class FreeChatService
   end
 
   def result(input)
-    Success(message: input[:ai_message] || "...")
+    Success(message: input[:ai_message] || '...')
   end
 
   private

@@ -10,6 +10,7 @@ class PromptService
 
   step :build_prompt
   step :build_trips_response
+  step :fetch_images
   step :result
 
   private
@@ -20,10 +21,10 @@ class PromptService
     @client = OpenAI::Client.new
     response = @client.chat(
       parameters: {
-        model: "gpt-4o",
+        model: 'gpt-4o',
         messages: [
           {
-            role: "user",
+            role: 'user',
             content: "
             Task:
             - Extract topics from the request;
@@ -55,15 +56,16 @@ class PromptService
   def build_trips_response(input)
     response = @client.chat(
       parameters: {
-        model: "gpt-4o",
-        response_format: { type: "json_object" },
+        model: 'gpt-4o',
+        response_format: { type: 'json_object' },
         messages: [
           {
-            role: "user",
+            role: 'user',
             content: "
             Task:
             - Always respond with an array of JSON objects;
               - Follow the format { trip_plans: [...] };
+              - Every Image key should have a null value;
             - When given a country, create 3 Trip Plans;
               - The destination should be different cities or counties of the country;
             - When given a city or county, create 1 Trip Plan;
@@ -71,13 +73,15 @@ class PromptService
               - Destination (destination);
               - Origin (origin);
               - Family Size (family_size);
-              - Hotel List (hotel_list);
+              - A list with 3 Hotels (hotels);
+                - Follow the format { name: ...,  image: ... };
               - Average temperature (average_temp)
-              - Surrounding cities (surrounding_cities);
+              - A list with 3 surrounding cities (surrounding_cities);
               - A list with 3 Landmarks (landmarks);
-                - Follow the format { name: ..., description: ... };
+                - Follow the format { name: ..., description: ..., image: ... };
                 - Description should be 10 words;
               - Popular restaurants (restaurants);
+                - Follow the format { name: ..., image: ... };
               - Small history of the area (small_history);
               - 10 word description of the area (short_description);
               - Start Date (start_date);
@@ -95,6 +99,7 @@ class PromptService
                 - Return each activity as a string;
                 - The first activity needs to match the Arrival to the destination (use the first string from departures_from_origin);
                 - The last activity needs to match the Departure of the destination (use the first string from departures_from_destination);
+              - Image;
             - Remove values that are not specified or provided.
             - Return the information in portuguese of Portugal.
             - Remove all single quote from response.
@@ -115,7 +120,35 @@ class PromptService
     Failure(message: "Error getting information! #{e}")
   end
 
+  def fetch_images(input)
+    url = URI('https://google.serper.dev/images')
+    @https = Net::HTTP.new(url.host, url.port)
+    @https.use_ssl = true
+    @request = Net::HTTP::Post.new(url)
+    @request['X-API-KEY'] = ENV.fetch('SERPER_API_KEY')
+    @request['Content-Type'] = 'application/json'
+
+    input[:ai_message]['trip_plans'].each do |trip_plan|
+      ['image', 'hotels', 'landmarks', 'restaurants'].each do |key|
+        if key == 'image'
+          trip_plan[key] = serper_request("wikipedia city #{trip_plan['destination']}") # To get barcelona the city and not the club for example
+        else
+          trip_plan[key].each { |row| row['image'] = serper_request("#{trip_plan['destination']} #{key} #{row['name']}") }
+        end
+      end
+    end
+    Success(input)
+  end
+
   def result(input)
-    Success(message: input[:ai_message] || "...")
+    Success(message: input[:ai_message] || '...')
+  end
+
+  private
+
+  def serper_request(query)
+    @request.body = JSON.dump({ 'q': query })
+    response = JSON.parse(@https.request(@request).read_body)
+    response['images'].find { |hash| hash['imageWidth'] >= 200 && hash['imageHeight'] >= 200 }['imageUrl']
   end
 end

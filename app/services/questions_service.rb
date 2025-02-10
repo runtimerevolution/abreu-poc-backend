@@ -15,11 +15,11 @@ class QuestionsService
     client = OpenAI::Client.new
     response = client.chat(
       parameters: {
-        model: "gpt-4o",
-        response_format: { type: "json_object" },
+        model: 'gpt-4o',
+        response_format: { type: 'json_object' },
         messages: [
           {
-            role: "user",
+            role: 'user',
             content: "
             Task:
             - Give me seven questions that can help me pinpoint a vacation plan;
@@ -46,6 +46,6 @@ class QuestionsService
   end
 
   def result(input)
-    Success(message: input[:questions] || "...")
+    Success(message: input[:questions] || '...')
   end
 end
