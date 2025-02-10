@@ -56,13 +56,15 @@ class PromptService
     response = @client.chat(
       parameters: {
         model: "gpt-4o",
+        response_format: { type: "json_object"},
         messages: [
           {
             role: "user",
             content: "
             Task:
-            - Always respond with an array of JSON
-            - When given a country, create 2 Trip Plans;
+            - Always respond with an array of JSON objects;
+              - Follow the format { trip_plans: [...] };
+            - When given a country, create 3 Trip Plans;
               - The destination should be different cities or counties of the country;
             - When given a city or county, create 1 Trip Plan;
             - Required information
@@ -72,7 +74,9 @@ class PromptService
               - Hotel List (hotel_list);
               - Average temperature (average_temp)
               - Surrounding cities (surrounding_cities);
-              - Landmarks (landmarks);
+              - A list with 3 Landmarks (landmarks);
+                - Follow the format { name: ..., description: ... };
+                - Description should be 10 words;
               - Popular restaurants (restaurants);
               - Small history of the area (small_history);
               - 10 word description of the area (short_description);
@@ -80,9 +84,9 @@ class PromptService
               - End Date (end_date);
               - Estimated price; (price)
               - A list of 3 planes to board to the destination with an hour and travel time (departures_from_origin);
-                - follow the format 'date, departure hour, duration'
+                - Follow the format 'date, departure hour, duration'
               - A list of 3 planes to board to the origin with an hour and travel time (departures_from_destination);
-                - follow the format 'date, departure hour, duration'
+                - Follow the format 'date, departure hour, duration'
               - Activities for each day, for each time of day, based on the family size (activities_per_day);
                 - Follow the format { morning: ..., afternoon: ..., evening: ... }
                 - Each key should be the specific day of the trip;
@@ -104,7 +108,7 @@ class PromptService
         temperature: 0.7
       }
     )
-    input[:ai_message] = JSON.parse(response['choices'].first['message']['content'].match(/\[\s*\{.*?\}\s*\]/m)[0])
+    input[:ai_message] = JSON.parse(response['choices'].first['message']['content'])
     Success(input)
   rescue StandardError => e
     Failure(message: "Error getting information! #{e}")

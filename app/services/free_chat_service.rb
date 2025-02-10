@@ -60,12 +60,13 @@ class FreeChatService
     response = @client.chat(
       parameters: {
         model: "gpt-4o",
+        response_format: { type: "json_object"},
         messages: [
           {
             role: "user",
             content: "
             Task:
-            - Always respond with an array of JSON with a single object;
+            - Always respond with a JSON object;
             - Make a conversation with the objective of understanding where the use wants to go on vacations;
             - The questions should be around this topics: #{all_keys};
             - Take into account your last reply;
@@ -90,10 +91,7 @@ class FreeChatService
         temperature: 0.7
       }
     )
-
-    response = JSON.parse(
-      response['choices'].first['message']['content'].match(/\[\s*\{.*?\}\s*\]/m)[0]
-    ).first.delete_if { |k, v| v.blank? }
+    response = JSON.parse(response['choices'].first['message']['content']).delete_if { |k, v| v.blank? }
     REDIS.set("#{input[:user_session]}-last_reply", response['message'])
     @context.merge!(response.except('message', 'finished')) { |k, old_v, new_v| new_v.present? ? new_v : old_v }
     REDIS.set(input[:user_session], @context.to_json)

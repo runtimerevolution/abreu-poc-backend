@@ -16,6 +16,7 @@ class QuestionsService
     response = client.chat(
       parameters: {
         model: "gpt-4o",
+        response_format: { type: "json_object"},
         messages: [
           {
             role: "user",
@@ -23,6 +24,7 @@ class QuestionsService
             Task:
             - Give me seven questions that can help me pinpoint a vacation plan;
             - Return the questions in an array of JSON objects;
+              - Make sure to always ask where the user wants to go;
               - Format: { question: ..., key: ... };
               - The key value should be in english;
             - Don't ask for suggestions
@@ -37,7 +39,7 @@ class QuestionsService
         temperature: 0.7
       }
     )
-    Success({ questions: JSON.parse(response['choices'].first['message']['content'].match(/\[\s*\{.*?\}\s*\]/m)[0]) })
+    Success({ questions: JSON.parse(response['choices'].first['message']['content']) })
   rescue StandardError => e
     Failure(message: "Error getting information! #{e}")
   end
