@@ -60,7 +60,7 @@ class FreeChatService
     response = @client.chat(
       parameters: {
         model: "gpt-4o",
-        response_format: { type: "json_object"},
+        response_format: { type: "json_object" },
         messages: [
           {
             role: "user",

@@ -16,7 +16,7 @@ class QuestionsService
     response = client.chat(
       parameters: {
         model: "gpt-4o",
-        response_format: { type: "json_object"},
+        response_format: { type: "json_object" },
         messages: [
           {
             role: "user",
@@ -24,8 +24,9 @@ class QuestionsService
             Task:
             - Give me seven questions that can help me pinpoint a vacation plan;
             - Return the questions in an array of JSON objects;
+              - Format: { questions: [...] }
               - Make sure to always ask where the user wants to go;
-              - Format: { question: ..., key: ... };
+              - Question object format: { question: ..., key: ... };
               - The key value should be in english;
             - Don't ask for suggestions
             - Remove values that are not specified or provided.
