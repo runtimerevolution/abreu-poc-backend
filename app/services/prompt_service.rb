@@ -69,6 +69,8 @@ class PromptService
             - When given a country, create 2 Trip Plans;
               - The destination should be different cities or counties of the country;
             - When given a city or county, create 1 Trip Plan;
+            - The current year is #{Time.zone.now.utc.year};
+            - When returning dates, always use the format 'day/month/year';
             - Required information
               - Destination (destination);
               - Origin (origin);
@@ -95,7 +97,6 @@ class PromptService
               - Activities for each day, for each time of day, based on the family size (activities_per_day);
                 - Follow the format { morning: ..., afternoon: ..., evening: ... }
                 - Each key should be the specific day of the trip;
-                  - The key should follow the format 'day/month/year'
                 - Return each activity as a string;
                 - The first activity needs to match the Arrival to the destination (use the first string from departures_from_origin);
                 - The last activity needs to match the Departure of the destination (use the first string from departures_from_destination);
