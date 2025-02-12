@@ -122,11 +122,18 @@ class PromptService
   end
 
   def fetch_images(input)
+    api_key = if (REDIS.get('SERPER_API_KEY1').to_i || 0) > 100
+                'SERPER_API_KEY1'
+              elsif (REDIS.get('SERPER_API_KEY2').to_i || 0) > 100
+                'SERPER_API_KEY2'
+              end
+    return Success(input) unless api_key.present?
+
     url = URI('https://google.serper.dev/images')
     @https = Net::HTTP.new(url.host, url.port)
     @https.use_ssl = true
     @request = Net::HTTP::Post.new(url)
-    @request['X-API-KEY'] = ENV.fetch('SERPER_API_KEY')
+    @request['X-API-KEY'] = ENV.fetch(api_key)
     @request['Content-Type'] = 'application/json'
 
     input[:ai_message]['trip_plans'].each do |trip_plan|
@@ -138,6 +145,8 @@ class PromptService
         end
       end
     end
+    remaining_credits = REDIS.get(api_key).to_i - input[:ai_message]['trip_plans'].count * 10
+    REDIS.set(api_key, remaining_credits)
     Success(input)
   end
 
